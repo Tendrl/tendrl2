@@ -1,8 +1,8 @@
 package main
 
-import(
-"fmt"
-"github.com/Tendrl/tendrl2/gd2client"
+import (
+	"fmt"
+	"github.com/Tendrl/tendrl2/gd2client"
 )
 
 func main() {
