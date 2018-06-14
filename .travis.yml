@@ -15,10 +15,6 @@ go:
 git:
   depth: 1
 
-before_install:                                                                 
-  - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh  
-  - dep ensure
-
 # Skip the install step. Don't `go get` dependencies. Only build with the code
 # in vendor/
 install: true
