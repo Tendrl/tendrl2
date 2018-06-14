@@ -2,6 +2,7 @@ package etcd
 
 import (
 	"context"
+	"fmt"
 	"github.com/coreos/etcd/client"
 	"github.com/coreos/etcd/clientv3"
 	"github.com/coreos/etcd/clientv3/namespace"
@@ -35,6 +36,7 @@ func init() {
 	Clientv3.KV = namespace.NewKV(Clientv3.KV, "tendrl2/")
 	Clientv3.Watcher = namespace.NewWatcher(Clientv3.Watcher, "tendrl2/")
 	Clientv3.Lease = namespace.NewLease(Clientv3.Lease, "tendrl2/")
+	//Clientv3.Get(
 }
 
 func Get(path string) (*client.Response, error) {
@@ -44,9 +46,9 @@ func Get(path string) (*client.Response, error) {
 		log.Fatal(err)
 	} else {
 		// print common key info
-		log.Println("Get is done. Metadata is %q\n", resp)
+		log.Println(fmt.Sprintf("Get is done. Metadata is %q", resp))
 		// print value
-		log.Println("%q key has %q value\n", resp.Node.Key, resp.Node.Value)
+		log.Println(fmt.Sprintf("%q key has %q value", resp.Node.Key, resp.Node.Value))
 	}
 	return resp, err
 }
@@ -58,9 +60,9 @@ func Set(path string, value string) (*client.Response, error) {
 		log.Fatal(err)
 	} else {
 		// print common key info
-		log.Println("Get is done. Metadata is %q\n", resp)
+		log.Println(fmt.Sprintf("Set is done. Metadata is %q", resp))
 		// print value
-		log.Println("%q key has %q value\n", resp.Node.Key, resp.Node.Value)
+		log.Println(fmt.Sprintf("%q key has %q value", resp.Node.Key, resp.Node.Value))
 	}
 	return resp, err
 }

@@ -25,7 +25,6 @@ func SyncAll(endpoint string) error {
 func syncCluster(endpoint string) {
 	cluster_id := "cb012f6c-9cc1-4390-8d19-885dbf98dd4f"
 	version := gd2.Version(endpoint)
-	log.Println(version)
 	cluster := make(map[string]interface{})
 	cluster["integration_id"] = cluster_id
 	cluster["current_job"] = "{}"
@@ -35,9 +34,8 @@ func syncCluster(endpoint string) {
 	cluster["sds_version"] = version["glusterd-version"]
 	cluster["sds_name"] = "gluster"
 	cluster["gd2-api-version"] = version["api-version"]
-	log.Println(cluster)
 	json_cluster, _ := json.Marshal(cluster)
-	if _, err := etcd.Set("/data", string(json_cluster)); err != nil {
+	if _, err := etcd.Set("/clusters/"+cluster_id+"/data", string(json_cluster)); err != nil {
 		panic(err)
 	}
 }
@@ -52,8 +50,10 @@ func syncPeers(endpoint string) error {
 	}
 	for i := 0; i < len(peers); i++ {
 		json_peer, _ := json.Marshal(peers[i])
-		resp, err := etcd.Set("/clusters/"+cluster_id+"/peers/"+peers[i].ID.String()+"/data", string(json_peer)) // TODO Add TTL 2 min
-		log.Println(resp, err)
+		_, err := etcd.Set("/clusters/"+cluster_id+"/peers/"+peers[i].ID.String()+"/data", string(json_peer))
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
