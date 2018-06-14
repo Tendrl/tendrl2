@@ -8,6 +8,8 @@ clean: ## Trash binary files
 	@echo "--> cleaning..."
 	@go clean || (echo "Unable to clean project" && exit 1)
 	@rm -rf $(GOPATH)/bin/$(BINARY_NAME) 2> /dev/null
+	@curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+	@dep ensure
 	@echo "Clean OK"
 
 test: ## Run all tests
