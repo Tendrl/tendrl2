@@ -46,12 +46,13 @@ func syncPeers(endpoint string) error {
 	// export GD2_ENDPOINT="http://192.168.121.222:24007"
 
 	peers, err := gd2.Client(endpoint).Peers()
+	cluster_id := "cb012f6c-9cc1-4390-8d19-885dbf98dd4f"
 	if err != nil {
 		panic(err)
 	}
 	for i := 0; i < len(peers); i++ {
 		json_peer, _ := json.Marshal(peers[i])
-		resp, err := etcd.Set("/peers/"+peers[i].ID.String()+"/data", string(json_peer)) // TODO Add TTL 2 min
+		resp, err := etcd.Set("/clusters/"+cluster_id+"/peers/"+peers[i].ID.String()+"/data", string(json_peer)) // TODO Add TTL 2 min
 		log.Println(resp, err)
 	}
 	return nil
