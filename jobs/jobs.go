@@ -25,7 +25,8 @@ func All() (*clientv3.GetResponse, error) {
 
 func Enqueue(data string) error {
 	cluster_id := "cb012f6c-9cc1-4390-8d19-885dbf98dd4f"
-	queue := etcd.Queue("/clusters/" + cluster_id + "/jobs/")
+	queue := etcd.Queue("/clusters/" + cluster_id + "/jobs")
+	log.Println("enqueueing")
 	job := Job{
 		Type: "ansible",
 		Data: data,
