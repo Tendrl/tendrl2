@@ -14,7 +14,7 @@ test: ## Run all tests
 	@echo "--> testing..."
 	@go test -v $(PACKAGE)/...
 
-install: clean ## Compile sources and build binary
+install: clean ## Compile sources and build binary and install binary
 	@echo "--> installing..."
 	@go install $(PACKAGE) || (echo "Compilation error" && exit 1)
 	@echo "Install OK"
@@ -25,3 +25,8 @@ run: install ## Run your application
 
 usage: ## List available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+build: clean ## Compile sources and build binary
+	@echo "--> building..."
+	@go build $(PACKAGE) || (echo "Compilation error" && exit 1)
+	@echo "Build OK"
