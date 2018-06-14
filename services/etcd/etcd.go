@@ -35,7 +35,6 @@ func init() {
 	Clientv3.KV = namespace.NewKV(Clientv3.KV, "tendrl2/")
 	Clientv3.Watcher = namespace.NewWatcher(Clientv3.Watcher, "tendrl2/")
 	Clientv3.Lease = namespace.NewLease(Clientv3.Lease, "tendrl2/")
-	//Clientv3.Get(
 }
 
 func Get(path string) (*client.Response, error) {
