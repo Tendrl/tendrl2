@@ -20,7 +20,7 @@ func newJob(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "{\"job_id\":\""+job_id+"\"}")
 }
 
-func getJob(w http.ResponseWriter, r *http.Request) {
+func getJobs(w http.ResponseWriter, r *http.Request) {
 	dirname := "/var/log/ansible/hosts/"
 	f, err := os.Open(dirname)
 	if err != nil {
