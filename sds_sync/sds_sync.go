@@ -23,7 +23,7 @@ func SyncAll(endpoint string) error {
 	return nil
 }
 func syncCluster(endpoint string) {
-	cluster_id := "cb012f6c-9cc1-4390-8d19-885dbf98dd4f"
+	cluster_id := "my_cluster"
 	version := gd2.Version(endpoint)
 	cluster := make(map[string]interface{})
 	cluster["integration_id"] = cluster_id
@@ -44,7 +44,7 @@ func syncPeers(endpoint string) error {
 	// export GD2_ENDPOINT="http://192.168.121.222:24007"
 
 	peers, err := gd2.Client(endpoint).Peers()
-	cluster_id := "cb012f6c-9cc1-4390-8d19-885dbf98dd4f"
+	cluster_id := "my_cluster"
 	if err != nil {
 		panic(err)
 	}
