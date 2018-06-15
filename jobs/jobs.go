@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	cluster_id = "cb012f6c-9cc1-4390-8d19-885dbf98dd4f"
+	cluster_id = "my_cluster"
 )
 
 type Job struct {
