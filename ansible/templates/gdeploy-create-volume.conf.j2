@@ -1,0 +1,10 @@
+[hosts]
+{% for host in groups["all"]|sort %}
+{{ hostvars[host]["ansible_hostname"] }}
+{% endfor %}
+
+[volume]
+action=create
+replica=yes
+replica_count=2
+force=yes
