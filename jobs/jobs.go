@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"github.com/Tendrl/tendrl2/sds_sync"
 	"github.com/Tendrl/tendrl2/services/etcd"
 	"github.com/coreos/etcd/client"
 	"github.com/google/uuid"
@@ -110,4 +111,8 @@ func (job Job) Run() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	if err := sds_sync.SyncAll("http://gd2-1:24007"); err != nil {
+		log.Println("Sync Error", err)
+	}
+
 }
