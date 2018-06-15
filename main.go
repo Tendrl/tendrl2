@@ -48,7 +48,7 @@ func main() {
 	cluster_id := "cb012f6c-9cc1-4390-8d19-885dbf98dd4f"
 	mux := goji.NewMux()
 	mux.HandleFunc(pat.Post("/clusters/"+cluster_id+"/jobs"), newJob)
-	mux.HandleFunc(pat.Get("/clusters/"+cluster_id+"/jobs"), getJob)
+	mux.HandleFunc(pat.Get("/clusters/"+cluster_id+"/jobs"), getJobs)
 	log.Println("listening")
 	go http.ListenAndServe("localhost:8000", mux)
 	if err := sds_sync.SyncAll(os.Getenv("GD2_ENDPOINT")); err != nil {
