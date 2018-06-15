@@ -1,0 +1,17 @@
+- name: Create Volume
+
+  become: true
+
+  tasks:
+    - name: Check gdeploy present
+      yum:
+        name: gdeploy
+        state: present
+
+    - name: Generate gdeploy.conf
+      template:
+        src: gdeploy-create-volume.conf.j2
+        dest: "/tmp/gdeploy-create-volume.conf"
+
+    - name: Run GDeploy
+      shell: 'gdeploy -c /tmp/gdeploy-create-volume.conf'
