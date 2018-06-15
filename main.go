@@ -49,7 +49,7 @@ func main() {
 	mux.HandleFunc(pat.Post("/clusters/"+cluster_id+"/jobs"), newJob)
 	mux.HandleFunc(pat.Get("/clusters/"+cluster_id+"/jobs/:job_id"), getJob)
 	log.Println("Listening for jobs...")
-	go http.ListenAndServe("localhost:8000", mux)
+	go http.ListenAndServe("0.0.0.0:8000", mux)
 	log.Println("Starting job worker...")
 	for true {
 		job_id := jobs.Work()
