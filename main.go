@@ -21,7 +21,7 @@ func newJob(w http.ResponseWriter, r *http.Request) {
 }
 
 func getJob(w http.ResponseWriter, r *http.Request) {
-	dirname := "/var/log/ansible/hosts/"
+	dirname := "job_runs/" + pat.Param(r, "job_id") + "/"
 	f, err := os.Open(dirname)
 	if err != nil {
 		log.Fatal(err)

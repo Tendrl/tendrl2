@@ -1,12 +1,15 @@
 package jobs
 
 import (
+	"bufio"
 	"encoding/json"
+	"fmt"
 	"github.com/Tendrl/tendrl2/services/etcd"
 	"github.com/coreos/etcd/client"
 	"github.com/google/uuid"
 	"log"
-	//"os/exec"
+	"os"
+	"os/exec"
 )
 
 var (
@@ -73,6 +76,38 @@ func Work() string {
 func (job Job) Run() {
 	//inventory := []string{"192.168.121.139", "192.168.121.222"}
 	//arguments := "provision --provision-with prepare_gluster.yml"
-	//exec.Command("ansible-playbook", append([]string{"-i"}, inventory, []string{"ansible/prepare_gluster.yml"}))
-	log.Println("ansible-playbook", append([]string{"-i", "192.168.121.139", "192.168.121.222", "ansible/prepare_gluster.yml"}))
+
+	job_data := map[string]string{}
+	err := json.Unmarshal([]byte(job.Data), &job_data)
+	if err != nil {
+		panic(err)
+	}
+	inventory := job_data["inventory"]
+	playbook := job_data["playbook"]
+	cmd := exec.Command("ansible-playbook", "-u", "root", "-i", inventory, playbook)
+	cmdReader, err := cmd.StdoutPipe()
+	if err != nil {
+		log.Println(err)
+	}
+
+	scanner := bufio.NewScanner(cmdReader)
+	os.Mkdir("job_runs/"+job.Id, 0775)
+	f, err := os.Create("job_runs/" + job.Id + "/ansible-playbook.log")
+	w := bufio.NewWriter(f)
+	go func() {
+		for scanner.Scan() {
+			fmt.Fprintf(w, "%s\n", scanner.Text())
+			w.Flush()
+		}
+	}()
+
+	err = cmd.Start()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = cmd.Wait()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
