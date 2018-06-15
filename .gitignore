@@ -41,3 +41,4 @@ _testmain.go
 *.swp
 *.swo
 vendor/
+job_runs/

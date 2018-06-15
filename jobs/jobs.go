@@ -83,6 +83,7 @@ func (job Job) Run() {
 	if err != nil {
 		panic(err)
 	}
+	log.Println(job_data)
 	inventory := job_data["inventory"]
 	playbook := job_data["playbook"]
 	cmd := exec.Command("ansible-playbook", "-u", "root", "-i", inventory, playbook)
@@ -92,7 +93,7 @@ func (job Job) Run() {
 	}
 
 	scanner := bufio.NewScanner(cmdReader)
-	os.Mkdir("job_runs/"+job.Id, 0775)
+	os.MkdirAll("job_runs/"+job.Id, 0775)
 	f, err := os.Create("job_runs/" + job.Id + "/ansible-playbook.log")
 	w := bufio.NewWriter(f)
 	go func() {
@@ -100,19 +101,30 @@ func (job Job) Run() {
 			fmt.Fprintf(w, "%s\n", scanner.Text())
 			w.Flush()
 		}
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Println("Sync Error, is the cluster not up yet?", r)
+			}
+			//f.Close()
+		}()
+		if err := sds_sync.SyncAll("http://gd2-1.local:24007"); err != nil {
+			log.Println("Sync Error", err)
+		}
 	}()
 
 	err = cmd.Start()
+
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err.Error())
+		log.Println("exit in start")
+		return
 	}
 
 	err = cmd.Wait()
 	if err != nil {
-		log.Fatal(err)
-	}
-	if err := sds_sync.SyncAll("http://gd2-1:24007"); err != nil {
-		log.Println("Sync Error", err)
+		log.Println(err.Error())
+		log.Println("exit in wait")
+		return
 	}
 
 }
