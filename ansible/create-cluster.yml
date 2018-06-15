@@ -1,10 +1,7 @@
 ---
 
-- hosts: gluster4-servers
-  strategy: free
+- hosts: all
   become: true
-  extra_vars:
-    provider: libvirt
   tasks:
     - name: add gluster4 nightly repo
       get_url:
@@ -66,17 +63,21 @@
       yum:
         name: centos-release-gluster
         state: present
+      run_once: true
 
     - name: Install gdeploy
       yum:
         name: gdeploy
         state: present
+      run_once: true
 
     - name: Generate gdeploy.conf
       template:
-        src: gdeploy-{{ provider }}.conf.j2
+        src: gdeploy-libvirt.conf.j2
         dest: "/tmp/gdeploy.conf"
+      run_once: true
 
     - name: Run GDeploy
       shell: 'gdeploy -c /tmp/gdeploy.conf'
+      run_once: true
 ...
