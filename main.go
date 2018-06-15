@@ -9,7 +9,6 @@ import (
 	"os"
 
 	"github.com/Tendrl/tendrl2/jobs"
-	"github.com/Tendrl/tendrl2/sds_sync"
 	"goji.io"
 	"goji.io/pat"
 )
@@ -49,12 +48,9 @@ func main() {
 	mux := goji.NewMux()
 	mux.HandleFunc(pat.Post("/clusters/"+cluster_id+"/jobs"), newJob)
 	mux.HandleFunc(pat.Get("/clusters/"+cluster_id+"/jobs/:job_id"), getJob)
-	log.Println("listening")
-	go http.ListenAndServe("localhost:8000", mux)
-	if err := sds_sync.SyncAll(os.Getenv("GD2_ENDPOINT")); err != nil {
-		log.Println("Sync Error", err)
-	}
 	log.Println("Listening for jobs...")
+	go http.ListenAndServe("localhost:8000", mux)
+	log.Println("Starting job worker...")
 	for true {
 		job_id := jobs.Work()
 		log.Println("Working on job:", job_id)
