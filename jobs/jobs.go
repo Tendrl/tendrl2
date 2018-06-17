@@ -107,7 +107,7 @@ func (job Job) Run() {
 			}
 			//f.Close()
 		}()
-		if err := sds_sync.SyncAll("http://gd2-1.local:24007"); err != nil {
+		if err := sds_sync.SyncAll("http://gd2-1:24007"); err != nil {
 			log.Println("Sync Error", err)
 		}
 	}()
