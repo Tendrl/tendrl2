@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/Tendrl/tendrl2/jobs"
 	"goji.io"
@@ -15,32 +14,29 @@ import (
 
 func newJob(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
-	job_id := jobs.Enqueue(string(body))
-	fmt.Fprintf(w, "{\"job_id\":\""+job_id+"\"}")
+	job_data := jobs.JobData{}
+	if err := json.Unmarshal([]byte(body), &job_data); err != nil {
+		w.WriteHeader(400)
+		fmt.Fprint(w, "{\"error\":\"", err, "\"}")
+	}
+	job := jobs.New(job_data)
+	job.Enqueue()
+	fmt.Fprintf(w, job.Json())
 }
 
 func getJob(w http.ResponseWriter, r *http.Request) {
-	dirname := "job_runs/" + pat.Param(r, "job_id") + "/"
-	f, err := os.Open(dirname)
-	if err != nil {
-		log.Fatal(err)
-	}
-	files, err := f.Readdir(-1)
-	f.Close()
-	if err != nil {
-		log.Fatal(err)
-	}
-	job_data := map[string]string{}
-	for _, file := range files {
-		b, err := ioutil.ReadFile(dirname + file.Name())
-		if err != nil {
-			log.Println(err)
+	id := pat.Param(r, "job_id")
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Fprintf(w, "{\"error\":\"", r, "\"}")
 		}
-		job_data[file.Name()] = string(b)
-
+	}()
+	job, err := jobs.Find(id)
+	if err != nil {
+		fmt.Fprintf(w, "{\"error\":\""+err.Error()+"\"}")
+		return
 	}
-	jsonString, _ := json.Marshal(job_data)
-	fmt.Fprintf(w, string(jsonString))
+	fmt.Fprintf(w, job.Json())
 }
 
 func main() {
